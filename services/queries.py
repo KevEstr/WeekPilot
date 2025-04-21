@@ -1,12 +1,11 @@
 # app/services/queries.py
 
-from app.db import db
-
 def execute_query(sql, bind_key='sqlserver'):
     """
     Ejecuta una consulta SQL de sólo lectura contra el bind indicado.
     Devuelve una lista de tuplas con los resultados.
     """
+    from app.db import db  # 👈 Importación local para evitar el circular import
     engine = db.get_engine(bind=bind_key)
     with engine.connect() as conn:
         result = conn.execute(sql)
