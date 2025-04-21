@@ -4,19 +4,27 @@ from extensions import db
 from sqlalchemy import text
 
 
-def execute_query(sql: str, bind_key: str = 'sqlserver'):
-    """
-    Ejecuta una consulta SQL de solo lectura contra el bind indicado.
-    Devuelve una lista de tuplas con los resultados.
-    """
-    # Obtener el engine asociado al bind
-    engine = db.get_engine(bind=bind_key)
+engine = create_engine(
+    'mssql+pymssql://'
+    'db_read:'
+    'mHRL_%3C%3D%27%28%5D%2C%23aZ%29T%22A3QeD'    # contraseña percent‑encoded
+    '@20.109.21.246:1433'
+    '/MICELU'
+    '?trustservercertificate=yes',
+    echo=False,           # True para debug SQL
+    pool_pre_ping=True,   # chequea conectividad antes de cada uso
+)
 
-    # Ejecutar la consulta con un context manager
+
+def execute_query(sql: str):
+    """
+    Ejecuta una consulta SQL de solo lectura usando el engine inline.
+    Devuelve lista de tuplas.
+    """
     with engine.connect() as conn:
         result = conn.execute(text(sql))
         return result.fetchall()
-
+        
 
 def get_spare_parts():
     sql = """
