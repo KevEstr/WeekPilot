@@ -1,7 +1,7 @@
 # services/queries.py
 
 from extensions import db
-from sqlalchemy import text
+from sqlalchemy import text, create_engine
 
 
 engine = create_engine(
