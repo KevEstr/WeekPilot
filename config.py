@@ -6,25 +6,20 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_EMPLOYEES = os.getenv("POSTGRES_CONST_BASE_EMPLOYEES")
+BASE_TICKETS = os.getenv("POSTGRES_CONST_BASE_TICKETS")
 
 class Config:
-    # PostgreSQL principal
-    SQLALCHEMY_DATABASE_URI = (
-        f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
-        f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-    )
+    SECRET_KEY = os.getenv("SECRET_KEY", "clave_secreta_por_defecto")
 
-    # Conexiones adicionales
+    # Base principal PostgreSQL
+    SQLALCHEMY_DATABASE_URI = BASE_TICKETS
+
     SQLALCHEMY_BINDS = {
-        # Aquí cambiamos a pymssql en lugar de pyodbc
-        'sqlserver': (
-            f"mssql+pymssql://{os.getenv('SQLSERVER_USER')}:"
-            f"{os.getenv('SQLSERVER_PASSWORD')}@"
-            f"{os.getenv('SQLSERVER_HOST')}:1433/"
-            f"{os.getenv('SQLSERVER_DB')}"
+        "db1": BASE_EMPLOYEES,
+        "sqlserver": (
+            f"mssql+pymssql://{os.getenv('DB_UID')}:{os.getenv('DB_PWD')}"
+            f"@{os.getenv('DB_SERVER')}:1433/{os.getenv('DB_NAME')}"
         ),
-        'db3': BASE_EMPLOYEES,
     }
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.getenv('SECRET_KEY', 'yLxqdG0BGUft0Ep')
