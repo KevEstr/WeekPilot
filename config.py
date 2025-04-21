@@ -16,6 +16,7 @@ class Config:
 
     SQLALCHEMY_BINDS = {
         "db1": BASE_EMPLOYEES,
+        "db3": BASE_TICKETS,
         "sqlserver": (
             f"mssql+pymssql://{os.getenv('DB_UID')}:{os.getenv('DB_PWD')}"
             f"@{os.getenv('DB_SERVER')}:1433/{os.getenv('DB_NAME')}"
