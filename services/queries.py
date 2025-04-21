@@ -1,92 +1,59 @@
-# services/queries.py
+# app/services/queries.py
 
-import pyodbc
+from app.db import db
 
-
-def execute_query(query):
-    conn = pyodbc.connect('''DRIVER={ODBC Driver 18 for SQL Server};
-                             SERVER=20.109.21.246;
-                             DATABASE=MICELU;
-                             UID=db_read;
-                             PWD=mHRL_<='(],#aZ)T"A3QeD;
-                             TrustServerCertificate=yes''')
-    cursor = conn.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return results
-
+def execute_query(sql, bind_key='sqlserver'):
+    """
+    Ejecuta una consulta SQL de sólo lectura contra el bind indicado.
+    Devuelve una lista de tuplas con los resultados.
+    """
+    engine = db.get_engine(bind=bind_key)
+    with engine.connect() as conn:
+        result = conn.execute(sql)
+        return result.fetchall()
 
 def get_spare_parts():
-    query = '''
+    sql = """
     SELECT CODIGO, DESCRIPCIO
     FROM MTMERCIA
     WHERE CODLINEA = 'ST'
-    '''
-    results = execute_query(query)
-    spare_parts = []
-    for row in results:
-        spare_parts.append({
-            "code": row[0],
-            "description": row[1]
-        })
-    return spare_parts
-
+    """
+    rows = execute_query(sql)
+    return [{"code": r[0], "description": r[1]} for r in rows]
 
 def get_product_information():
-    query = '''
+    sql = """
     SELECT DESCRIPCIO, CODIGO
     FROM MTMERCIA
-    WHERE (CODLINEA = 'CEL' AND CODGRUPO = 'SEMI') OR (CODLINEA = 'CYT' AND CODGRUPO = 'NUE')
-    '''
-    results = execute_query(query)
-    information = []
-    for row in results:
-        information.append({
-            "DESCRIPCIO": row[0],
-            "CODIGO": row[1],
-        })
-    return information
-
+    WHERE (CODLINEA = 'CEL' AND CODGRUPO = 'SEMI')
+       OR (CODLINEA = 'CYT' AND CODGRUPO = 'NUE')
+    """
+    rows = execute_query(sql)
+    return [{"DESCRIPCIO": r[0], "CODIGO": r[1]} for r in rows]
 
 def get_spare_name():
-    query = '''
+    sql = """
     SELECT DESCRIPCIO
     FROM MTMERCIA
     WHERE CODLINEA = 'ST'
-    '''
-    results = execute_query(query)
-    spare_names = []
-    for row in results:
-        spare_names.append(row[0])
-    return spare_names
-
+    """
+    rows = execute_query(sql)
+    return [r[0] for r in rows]
 
 def get_sertec():
-    query = '''
+    sql = """
     SELECT CODIGO
     FROM MTMERCIA
     WHERE CODIGO = 'SERTEC'
-    '''
-    results = execute_query(query)
-    sertec_values = []
-    for row in results:
-        sertec_values.append(row[0])
-    return sertec_values
-
+    """
+    rows = execute_query(sql)
+    return [r[0] for r in rows]
 
 def get_technicians():
-    query = """
-       SELECT NOMBRE, CODVEN
+    sql = """
+    SELECT NOMBRE, CODVEN
     FROM Venden 
-    WHERE COMENTARIO LIKE '%TECNICO%' 
+    WHERE COMENTARIO LIKE '%TECNICO%'
     """
-    results = execute_query(query)
-    technicians = []
-    for row in results:
-        technicians.append({
-            "NOMBRE": row[0],
-            "DOCUMENT": row[1]
-        })
-    return technicians
+    rows = execute_query(sql)
+    return [{"NOMBRE": r[0], "DOCUMENT": r[1]} for r in rows]
