@@ -10,7 +10,6 @@ engine = create_engine(
     'mHRL_%3C%3D%27%28%5D%2C%23aZ%29T%22A3QeD'    # contraseña percent‑encoded
     '@20.109.21.246:1433'
     '/MICELU'
-    '?trustservercertificate=yes',
     echo=False,           # True para debug SQL
     pool_pre_ping=True,   # chequea conectividad antes de cada uso
 )
