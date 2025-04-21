@@ -20,7 +20,7 @@ from datetime import timedelta
 load_dotenv()
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(PORT, Config)
 
 # Añadir la configuración de Azure a app.config
 app.config['AZURE_CONNECTION_STRING'] = os.environ.get('AZURE_CONNECTION_STRING', '')
@@ -68,3 +68,5 @@ register_blueprints(app)
 
 if __name__ == "__main__":
     app.run(debug=True)
+     port = int(os.environ.get("PORT", 5000))  
+     app.run(host="0.0.0.0", port=port, debug=True) 
