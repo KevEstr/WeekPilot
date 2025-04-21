@@ -1,15 +1,22 @@
-# app/services/queries.py
+# services/queries.py
 
-def execute_query(sql, bind_key='sqlserver'):
+from extensions import db
+from sqlalchemy import text
+
+
+def execute_query(sql: str, bind_key: str = 'sqlserver'):
     """
-    Ejecuta una consulta SQL de sólo lectura contra el bind indicado.
+    Ejecuta una consulta SQL de solo lectura contra el bind indicado.
     Devuelve una lista de tuplas con los resultados.
     """
-    
+    # Obtener el engine asociado al bind
     engine = db.get_engine(bind=bind_key)
+
+    # Ejecutar la consulta con un context manager
     with engine.connect() as conn:
-        result = conn.execute(sql)
+        result = conn.execute(text(sql))
         return result.fetchall()
+
 
 def get_spare_parts():
     sql = """
@@ -18,7 +25,8 @@ def get_spare_parts():
     WHERE CODLINEA = 'ST'
     """
     rows = execute_query(sql)
-    return [{"code": r[0], "description": r[1]} for r in rows]
+    return [{"code": row[0], "description": row[1]} for row in rows]
+
 
 def get_product_information():
     sql = """
@@ -28,7 +36,8 @@ def get_product_information():
        OR (CODLINEA = 'CYT' AND CODGRUPO = 'NUE')
     """
     rows = execute_query(sql)
-    return [{"DESCRIPCIO": r[0], "CODIGO": r[1]} for r in rows]
+    return [{"DESCRIPCIO": row[0], "CODIGO": row[1]} for row in rows]
+
 
 def get_spare_name():
     sql = """
@@ -37,7 +46,8 @@ def get_spare_name():
     WHERE CODLINEA = 'ST'
     """
     rows = execute_query(sql)
-    return [r[0] for r in rows]
+    return [row[0] for row in rows]
+
 
 def get_sertec():
     sql = """
@@ -46,7 +56,8 @@ def get_sertec():
     WHERE CODIGO = 'SERTEC'
     """
     rows = execute_query(sql)
-    return [r[0] for r in rows]
+    return [row[0] for row in rows]
+
 
 def get_technicians():
     sql = """
@@ -55,4 +66,4 @@ def get_technicians():
     WHERE COMENTARIO LIKE '%TECNICO%'
     """
     rows = execute_query(sql)
-    return [{"NOMBRE": r[0], "DOCUMENT": r[1]} for r in rows]
+    return [{"NOMBRE": row[0], "DOCUMENT": row[1]} for row in rows]
