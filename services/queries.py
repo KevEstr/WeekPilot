@@ -18,54 +18,76 @@ def execute_query(sql: str):
     with engine.connect() as conn:
         result = conn.execute(text(sql))
         return result.fetchall()
-        
 
 def get_spare_parts():
-    sql = """
+    query = '''
     SELECT CODIGO, DESCRIPCIO
     FROM MTMERCIA
     WHERE CODLINEA = 'ST'
-    """
-    rows = execute_query(sql)
-    return [{"code": row[0], "description": row[1]} for row in rows]
+    '''
+    results = execute_query(query)
+    spare_parts = []
+    for row in results:
+        spare_parts.append({
+            "code": row[0],
+            "description": row[1]
+        })
+    return spare_parts
 
 
 def get_product_information():
-    sql = """
+    query = '''
     SELECT DESCRIPCIO, CODIGO
     FROM MTMERCIA
-    WHERE (CODLINEA = 'CEL' AND CODGRUPO = 'SEMI')
-       OR (CODLINEA = 'CYT' AND CODGRUPO = 'NUE')
-    """
-    rows = execute_query(sql)
-    return [{"DESCRIPCIO": row[0], "CODIGO": row[1]} for row in rows]
+    WHERE (CODLINEA = 'CEL' AND CODGRUPO = 'SEMI') OR (CODLINEA = 'CYT' AND CODGRUPO = 'NUE')
+    '''
+    results = execute_query(query)
+    information = []
+    for row in results:
+        information.append({
+            "DESCRIPCIO": row[0],
+            "CODIGO": row[1],
+        })
+    return information
 
 
 def get_spare_name():
-    sql = """
+    query = '''
     SELECT DESCRIPCIO
     FROM MTMERCIA
     WHERE CODLINEA = 'ST'
-    """
-    rows = execute_query(sql)
-    return [row[0] for row in rows]
+    '''
+    results = execute_query(query)
+    spare_names = []
+    for row in results:
+        spare_names.append(row[0])
+    return spare_names
 
 
 def get_sertec():
-    sql = """
+    query = '''
     SELECT CODIGO
     FROM MTMERCIA
     WHERE CODIGO = 'SERTEC'
-    """
-    rows = execute_query(sql)
-    return [row[0] for row in rows]
+    '''
+    results = execute_query(query)
+    sertec_values = []
+    for row in results:
+        sertec_values.append(row[0])
+    return sertec_values
 
 
 def get_technicians():
-    sql = """
+    query = """
     SELECT NOMBRE, CODVEN
     FROM Venden 
-    WHERE COMENTARIO LIKE '%TECNICO%'
+    WHERE COMENTARIO LIKE '%TECNICO%' 
     """
-    rows = execute_query(sql)
-    return [{"NOMBRE": row[0], "DOCUMENT": row[1]} for row in rows]
+    results = execute_query(query)
+    technicians = []
+    for row in results:
+        technicians.append({
+            "NOMBRE": row[0],
+            "DOCUMENT": row[1]
+        })
+    return technicians
